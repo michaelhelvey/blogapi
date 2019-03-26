@@ -12,7 +12,7 @@ create table posts (
 create table users (
     id int not null AUTO_INCREMENT,
     display_name varchar(255) NOT NULL,
-    avatar varchar(255) NOT NULL,
+    avatar varchar(255) DEFAULT NULL,
     email varchar(255) NOT NULL,
     username varchar(255) NOT NULL,
     primary key (id)

@@ -15,11 +15,15 @@ func PostsDetailHandler(w http.ResponseWriter, r *http.Request) {
 
 // PostsHandler returns an array of JSON posts
 func PostsHandler(w http.ResponseWriter, r *http.Request) {
-	post := MockPost()
-	fmt.Fprintf(w, "%s", post.ToJSON())
+	posts, err := GetPostsFromDB()
+	response := PostsResponse{posts}
+	fmt.Fprintf(w, "%s", response.ToJSON())
 }
 
 func main() {
+	// verify that we can connect to the db
+	VerifyDBConnection()
+	// if we can, great, create our API
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/posts/", PostsHandler)
 	r.HandleFunc("/posts/{post_id}/", PostsDetailHandler)
