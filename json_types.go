@@ -43,6 +43,8 @@ type Category struct {
 	Title string
 }
 
+/* REMOVE */
+
 // ToJSON creates a JSON byte string from a Post struct instance
 func (p Post) ToJSON() []byte {
 	b, err := json.Marshal(p)
