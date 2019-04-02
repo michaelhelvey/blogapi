@@ -30,7 +30,7 @@ func PostsDetailHandler(w http.ResponseWriter, r *http.Request) {
 		NotFoundHandler(w, "Invalid post id")
 	}
 	var post Post
-	db.First(&post, postID)
+	db.Preload("Author").First(&post, postID)
 
 	jsonResponse, _ := json.Marshal(post)
 	fmt.Fprintf(w, "%s", jsonResponse)
