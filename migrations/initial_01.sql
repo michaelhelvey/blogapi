@@ -1,35 +1,35 @@
 use blog;
 
-create table posts (
-    id int not null AUTO_INCREMENT,
-    title varchar(255) NOT NULL,
-    body text NOT NULL,
-    author_id int NOT NULL,
-    created_at timestamp default CURRENT_TIMESTAMP,
-		updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		deleted_at timestamp NULL,
-    primary key (id),
-		foreign key (author_id) references users(id) on delete set null,
-);
-
 create table users (
     id int not null AUTO_INCREMENT,
     display_name varchar(255) NOT NULL,
     avatar varchar(255) DEFAULT NULL,
     email varchar(255) NOT NULL,
     username varchar(255) NOT NULL,
-		created_at timestamp default CURRENT_TIMESTAMP,
-		updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		deleted_at timestamp NULL,
+	created_at timestamp default CURRENT_TIMESTAMP,
+	updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	deleted_at timestamp NULL,
     primary key (id)
+);
+
+create table posts (
+    id int not null AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    body text NOT NULL,
+    author_id int NOT NULL,
+    created_at timestamp default CURRENT_TIMESTAMP,
+	updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	deleted_at timestamp NULL,
+    primary key (id),
+	foreign key (author_id) references users(id)
 );
 
 create table tags (
     id int not null AUTO_INCREMENT,
     title varchar(255) NOT NULL,
-		created_at timestamp default CURRENT_TIMESTAMP,
-		updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		deleted_at timestamp NULL,
+	created_at timestamp default CURRENT_TIMESTAMP,
+	updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	deleted_at timestamp NULL,
     primary key (id)
 );
 
@@ -44,9 +44,9 @@ create table posts_tags (
 create table categories (
     id int not null AUTO_INCREMENT,
     title varchar(255) NOT NULL,
-		created_at timestamp default CURRENT_TIMESTAMP,
-		updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		deleted_at timestamp NULL,
+	created_at timestamp default CURRENT_TIMESTAMP,
+	updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	deleted_at timestamp NULL,
     primary key (id)
 );
 
