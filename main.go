@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 	"log"
 	"net/http"
+	"strconv"
 )
+
+var db *gorm.DB
 
 // ServerErrorHandler Handles all server 500 errors
 func ServerErrorHandler(w http.ResponseWriter, err error) {
@@ -21,46 +25,34 @@ func NotFoundHandler(w http.ResponseWriter, errMsg string) {
 // PostsDetailHandler returns a JSON post by id
 func PostsDetailHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	postID := vars["post_id"]
-	posts, err := GetPostsFromDB(true, postID)
+	postID, err := strconv.Atoi(vars["post_id"])
 	if err != nil {
-		ServerErrorHandler(w, err)
-		return
+		NotFoundHandler(w, "Invalid post id")
 	}
-	if len(posts) == 0 {
-		NotFoundHandler(w, "Post Not Found")
-		return
-	}
-	postsResponseJSON, err := json.Marshal(posts[0])
-	fmt.Fprintf(w, "%s", postsResponseJSON)
+	var post Post
+	db.First(&post, postID)
+
+	jsonResponse, _ := json.Marshal(post)
+	fmt.Fprintf(w, "%s", jsonResponse)
 }
 
 // PostsHandler returns an array of JSON posts
 func PostsHandler(w http.ResponseWriter, r *http.Request) {
-	posts, err := GetPostsFromDB(false, "_")
-	if err != nil {
-		ServerErrorHandler(w, err)
-		return
-	}
-	postsResponseJSON, err := json.Marshal(posts)
-	if err != nil {
-		ServerErrorHandler(w, err)
-		return
-	}
-	fmt.Fprintf(w, "%s", postsResponseJSON)
+	var posts []Post
+	db.Preload("Author").Find(&posts)
+	jsonResponse, _ := json.Marshal(posts)
+	fmt.Fprintf(w, "%s", jsonResponse)
 }
 
 func main() {
-	// verify that we can connect to the db
-	VerifyDBConnection()
-	// if we can, great, create our API
+	var err error
+	db, err = InitOrm()
+	if err != nil {
+		panic("Cannot connect to the database")
+	}
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/posts/", PostsHandler)
 	r.HandleFunc("/posts/{post_id}/", PostsDetailHandler)
-	// TODO:
-	// search by title
-	// categories
-	// tags
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
